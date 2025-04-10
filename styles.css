@@ -1,0 +1,71 @@
+/* 通用样式 */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* logo容器样式 */
+.logo-container {
+  text-align: center;
+  padding: 20px;
+}
+
+/* 导航栏样式 */
+nav {
+  background-color: #333;
+}
+
+.nav-menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+.nav-menu li a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  display: block;
+}
+
+.nav-menu li a:hover {
+  background-color: #555;
+}
+
+/* 美食图片区域样式 */
+.food-images {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  padding: 20px;
+  margin-left: -5px; /* 抵消第一个元素的左外边距 */
+  margin-right: -5px; /* 抵消最后一个元素的右外边距 */
+}
+
+.image-item {
+  width: calc((100% / 7) - 10px); /* 调整宽度以每行显示 7 个图片 */
+  margin: 5px; /* 设置图片容器的外边距 */
+  border: 0.5px solid #ddd; /* 修改边框宽度为 0.5px */
+  box-sizing: border-box;
+  height: calc((100vw - 40px) / 7); /* 保持宽高比接近正方形 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-item img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block; 
+}
+
+/* 热门菜谱区域样式 */
+.popular-recipes {
+  width: 40%;
+  padding: 20px;
+}
