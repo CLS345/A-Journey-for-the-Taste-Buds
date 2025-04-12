@@ -8,7 +8,7 @@
 /* 设置整个页面的背景 */
 body {
     background-color: #f4f4f4; /* 这里可以根据需要修改背景颜色 */
-    background-image: url('images/beijing.jpg'); /* 如果需要使用背景图片，可替换为图片路径 */
+    background-image: url('/images/beijing.jpg'); /* 如果需要使用背景图片，可替换为图片路径 */
     background-size: cover; /* 使背景图片覆盖整个页面 */
     background-repeat: no-repeat; /* 防止背景图片重复 */
     background-attachment: fixed; /* 固定背景图片，使其不随页面滚动 */
