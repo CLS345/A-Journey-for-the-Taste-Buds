@@ -1,44 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <title>美食展示页面</title>
-</head>
+    <style>
+        /* 模态框样式 */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
+        }
 
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+            border-radius: 8px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
 <body>
     <div class="container">
         <div class="logo-container">
             <div class="logo-wrapper">
-                <img class="logo" src="/images/logo.jpg" alt="Logo">
+                <img class="logo" src="images/logo.jpg" alt="Logo">
                 <span class="logo-text">味蕾之旅</span>
             </div>
         </div>
+        
+        <!-- 计数器显示区域 -->
+        <div class="counter-container">
+            <p>本站访问量：<span id="visit-count">0</span> 次</p>
+        </div>
+
+        <!-- 导航栏 -->
+        <nav class="nav">
+            <ul>
+                <li class="active"><a href="index.html">首页</a></li>
+                <li><a href="https://fzero.fwh.is/link/index.php" target="_blank">友情链接</a></li>
+                <li><a href="#" id="visit-time-link">访问时间记录</a></li>
+            </ul>
+        </nav>
+        
         <div class="image-container">
             <div class="image-frame">
                 <a href="roastsucklingpig.html">
-                    <img src="/images/recommended1.jpg" alt="烤乳猪">
+                    <img src="images/recommended1.jpg" alt="烤乳猪">
                 </a>
             </div>
             <div class="image-frame">
                 <a href="blackgoat.html">
-                    <img src="/images/recommended2.jpg" alt="黑山羊火锅">
+                    <img src="images/recommended2.jpg" alt="黑山羊火锅">
                 </a>
             </div>
             <div class="image-frame">
                 <a href="roastgoose.html">
-                    <img src="/images/recommended3.jpg" alt="烧鹅">
+                    <img src="images/recommended3.jpg" alt="烧鹅">
                 </a>
             </div>
             <div class="image-frame">
                 <a href="skewers.html">
-                    <img src="/images/recommended4.jpg" alt="串串香">
+                    <img src="images/recommended4.jpg" alt="串串香">
                 </a>
             </div>
         </div>
     </div>
-</body>
 
+    <!-- 模态框 -->
+    <div id="visit-time-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>访问时间记录</h3>
+            <ul id="visit-time-list"></ul>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从localStorage获取访问计数，默认0
+            let visitCount = localStorage.getItem('websiteVisitCount');
+            visitCount = visitCount ? parseInt(visitCount) : 0;
+            
+            // 计数加1
+            visitCount++;
+            
+            // 更新页面显示
+            document.getElementById('visit-count').textContent = visitCount;
+            
+            // 写回localStorage
+            localStorage.setItem('websiteVisitCount', visitCount);
+            
+            // 控制台打印计数（可选）
+            console.log(`当前访问量: ${visitCount}`);
+
+            // 记录首次访问时间
+            const firstVisit = localStorage.getItem('firstVisitDate') || new Date().toDateString();
+            localStorage.setItem('firstVisitDate', firstVisit);
+
+            // 记录当日访问次数（SessionStorage关闭浏览器后重置）
+            const today = new Date().toDateString();
+            let dailyCount = sessionStorage.getItem(`dailyVisit_${today}`);
+            dailyCount = dailyCount ? parseInt(dailyCount) : 0;
+            dailyCount++;
+
+            // 记录每次访问时间
+            const visitHistory = localStorage.getItem('visitHistory') || '[]';
+            const history = JSON.parse(visitHistory);
+            history.push(new Date().toLocaleString());
+            localStorage.setItem('visitHistory', JSON.stringify(history));
+
+            sessionStorage.setItem(`dailyVisit_${today}`, dailyCount);
+
+            // 显示访问时间记录
+            const visitTimeList = document.getElementById('visit-time-list');
+            history.forEach(time => {
+                const listItem = document.createElement('li');
+                listItem.textContent = time;
+                visitTimeList.appendChild(listItem);
+            });
+
+            // 获取模态框和相关元素
+            const modal = document.getElementById('visit-time-modal');
+            const visitTimeLink = document.getElementById('visit-time-link');
+            const closeBtn = document.getElementsByClassName('close')[0];
+
+            // 点击链接显示模态框
+            visitTimeLink.onclick = function() {
+                modal.style.display = "block";
+            }
+
+            // 点击关闭按钮隐藏模态框
+            closeBtn.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            // 点击模态框外部隐藏模态框
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        });
+    </script>
+</body>
 </html>
