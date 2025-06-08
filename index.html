@@ -1,57 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>美食展示页面</title>
-    <style>
-        /* 模态框样式 */
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-            border-radius: 8px;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
 </head>
+
 <body>
-    <div class="container">
+    <!-- 访问时间记录模态框 -->
+    <div id="visit-time-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>访问时间记录</h3>
+            <ul id="visit-time-list"></ul>
+        </div>
+    </div>
+
+    <!-- 注册登录模态框 -->
+    <div id="register-login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>用户登录</h2>
+            <!-- 登录表单 -->
+            <div id="login-form">
+                <div class="form-group">
+                    <label for="login-username">请输入用户名</label>
+                    <input type="text" id="login-username" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">请输入密码</label>
+                    <input type="password" id="login-password" placeholder="请输入密码">
+                </div>
+                <div class="form-actions">
+                    <button onclick="login()">立即登录</button>
+                </div>
+                <a href="#" class="register-link" onclick="showRegisterForm()">还没有账号?点此注册.</a>
+            </div>
+            <!-- 注册表单 -->
+            <div id="register-form" style="display: none;">
+                <h2>用户注册</h2>
+                <div class="form-group">
+                    <label for="register-username">请输入用户名</label>
+                    <input type="text" id="register-username" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="register-password">请输入密码</label>
+                    <input type="password" id="register-password" placeholder="请输入密码">
+                </div>
+                <div class="form-actions">
+                    <button onclick="register()">立即注册</button>
+                </div>
+                <a href="#" class="register-link" onclick="showLoginForm()">已有账号?点此登录.</a>
+            </div>
+            <!-- 登录成功提示 -->
+            <div id="success-message" style="display: none;">
+                <h2>登录成功！</h2>
+                <p>欢迎，<span id="welcome-username"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="display: none;">
         <div class="logo-container">
             <div class="logo-wrapper">
                 <img class="logo" src="images/logo.jpg" alt="Logo">
                 <span class="logo-text">味蕾之旅</span>
             </div>
         </div>
-        
+
         <!-- 计数器显示区域 -->
         <div class="counter-container">
             <p>本站访问量：<span id="visit-count">0</span> 次</p>
@@ -63,9 +81,10 @@
                 <li class="active"><a href="index.html">首页</a></li>
                 <li><a href="https://fzero.fwh.is/link/index.php" target="_blank">友情链接</a></li>
                 <li><a href="#" id="visit-time-link">访问时间记录</a></li>
+                <li><a href="#" id="register-login-link">注册/登录</a></li>
             </ul>
         </nav>
-        
+
         <div class="image-container">
             <div class="image-frame">
                 <a href="roastsucklingpig.html">
@@ -90,81 +109,24 @@
         </div>
     </div>
 
-    <!-- 模态框 -->
-    <div id="visit-time-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>访问时间记录</h3>
-            <ul id="visit-time-list"></ul>
-        </div>
-    </div>
-    
+    <script src="script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 从localStorage获取访问计数，默认0
-            let visitCount = localStorage.getItem('websiteVisitCount');
-            visitCount = visitCount ? parseInt(visitCount) : 0;
-            
-            // 计数加1
-            visitCount++;
-            
-            // 更新页面显示
-            document.getElementById('visit-count').textContent = visitCount;
-            
-            // 写回localStorage
-            localStorage.setItem('websiteVisitCount', visitCount);
-            
-            // 控制台打印计数（可选）
-            console.log(`当前访问量: ${visitCount}`);
-
-            // 记录首次访问时间
-            const firstVisit = localStorage.getItem('firstVisitDate') || new Date().toDateString();
-            localStorage.setItem('firstVisitDate', firstVisit);
-
-            // 记录当日访问次数（SessionStorage关闭浏览器后重置）
-            const today = new Date().toDateString();
-            let dailyCount = sessionStorage.getItem(`dailyVisit_${today}`);
-            dailyCount = dailyCount ? parseInt(dailyCount) : 0;
-            dailyCount++;
-
-            // 记录每次访问时间
-            const visitHistory = localStorage.getItem('visitHistory') || '[]';
-            const history = JSON.parse(visitHistory);
-            history.push(new Date().toLocaleString());
-            localStorage.setItem('visitHistory', JSON.stringify(history));
-
-            sessionStorage.setItem(`dailyVisit_${today}`, dailyCount);
-
-            // 显示访问时间记录
-            const visitTimeList = document.getElementById('visit-time-list');
-            history.forEach(time => {
-                const listItem = document.createElement('li');
-                listItem.textContent = time;
-                visitTimeList.appendChild(listItem);
-            });
-
-            // 获取模态框和相关元素
-            const modal = document.getElementById('visit-time-modal');
-            const visitTimeLink = document.getElementById('visit-time-link');
-            const closeBtn = document.getElementsByClassName('close')[0];
-
-            // 点击链接显示模态框
-            visitTimeLink.onclick = function() {
-                modal.style.display = "block";
-            }
-
-            // 点击关闭按钮隐藏模态框
-            closeBtn.onclick = function() {
-                modal.style.display = "none";
-            }
-
-            // 点击模态框外部隐藏模态框
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                }
+        document.addEventListener('DOMContentLoaded', function () {
+            // 页面加载时检查用户是否已经登录
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const registerLoginModal = document.getElementById('register-login-modal');
+            const mainContent = document.querySelector('.container');
+            if (isLoggedIn === 'true') {
+                // 用户已经登录，显示首页内容
+                mainContent.style.display = "block";
+                registerLoginModal.style.display = "none";
+            } else {
+                // 用户未登录，显示注册登录模态框
+                registerLoginModal.style.display = "block";
+                mainContent.style.display = "none";
             }
         });
     </script>
 </body>
+
 </html>
